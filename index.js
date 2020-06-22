@@ -85,3 +85,23 @@ function handler4(el) {
 }
 
 console.log(firstFunc(['abs', '123'], handler4));
+
+function every(arr, fn) {
+  if(!Array.isArray(arr) || typeof(fn) !== 'function' || arr.length === 0){
+    console.log('Error');
+    return new Error('Error');    
+  }
+  for(let item in arr) {
+     return checkNumber(arr[item]);
+  }
+}
+
+function checkNumber(el, i, arr) {
+ return el > 5;
+}
+
+let a = every([1, 5, 21,  3, 15], checkNumber);
+let b = every([1, 5, 21,  3, 15], checkNumber);
+
+// console.log(a);
+console.log(b);
