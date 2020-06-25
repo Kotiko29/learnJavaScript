@@ -1,107 +1,153 @@
 import style from './src/assets/style/index.styl'; // импорт стилей
 
-// Функции высшего порядка
+// 1 Создать объект, который описывает ширину и высоту
+// прямоугольника, а также может посчитать площадь фигуры:
+// const rectangle = {width:..., height:..., getSquare:...};
 
-const arr = ['Masha', 'Vlad', 'Olga','Ekaterina', 'Max', 'Alexey'];
-
-function mapArray(arr, fn) {
-  const res = [];
-
-  for(let item in arr) {
-    res.push(fn(arr[item]));
-  }
-  return res; 
-}
-
-function nameLangth(el) {
-  return el.length;
-}
-let res1 = mapArray(arr, nameLangth);
-
-// console.log(res1);
-
-function nametoUpperCase(el) {
-  return el.toUpperCase();
-}
-
-let res2 = mapArray(arr, nametoUpperCase);
-// console.log(res2);
-
-function greeting(firstName) {
-  return function(lastName){
-    return `Hello ${firstName} ${lastName}`;
-  };
-}
-// let testGreeting = greeting('Ivan');
-// console.log(testGreeting);
-// let fullName = testGreeting('Ivanov');
-
-const fullName = greeting('Ivan')('Ivanov');
-// console.log(fullName);
-
-function question(job) {
-  const jobDictionary = {
-    developer: 'что такое JS?',
-    teacher: 'какой предмет вы ведете?',
-    driver: 'какой у вас стаж?'
-  };
-  return function(name) {
-    return `${name}, ${jobDictionary[job]}`;
-  };
-}
-
-const answer = question('driver')('Igor');
-// console.log(answer);
-
-// Домашнее задание по функциям высшего порядка
-
-function firstFunc(arr, fn) {
-  let res = '';
-  for(let item in arr) {
-    res += (fn(arr[item]));
-  }
-  return `New value: ${res}`;
-}
-
-function handler1(el) {
-  return el[0].toUpperCase() + el.slice(1);
-}
-
-console.log(firstFunc(['my', 'name', 'is', 'Trinity'], handler1));
-
-function handler2(el) {
-  return `${el*10}, `;
-}
-console.log(firstFunc([10, 20, 30], handler2) );
-
-function handler3(el) {
-  return `${el.name} is ${el.age}, `;
-}
-
-console.log(firstFunc([{age: 45, name: 'Jhon'}, {age: 20, name: 'Aaron'}], handler3));
-
-function handler4(el) {
-  return `${el.split("").reverse().join("")}, `;
-}
-
-console.log(firstFunc(['abs', '123'], handler4));
-
-function every(arr, fn) {
-  if(!Array.isArray(arr) || typeof(fn) !== 'function' || arr.length === 0){
-    console.log('Error');
-    return new Error('Error');    
-  }
-  for(let item in arr) {
-     return checkNumber(arr[item]);
+const rectangle = {
+  width: 250,
+  height: 150,
+  getSquare(){
+    return this.width * this.height;
   }
 }
 
-function checkNumber(el, i, arr) {
- return el > 5;
+let square = rectangle.getSquare();
+
+// 2 Создать объект, у которого будет цена товара и его скидка, а также
+// два метода: для получения цены и для расчета цены с учетом скидки:
+// const price = {
+// price: 10,
+// discount: '15%',
+// ... };
+// price.getPrice(); // 10
+// price.getPriceWithDiscount(); // 8.5
+
+const price = {
+price: 10,
+discount: '15%',
+getPrice() {
+  return this.price;
+},
+getPriceWithDiscount(){
+  return this.price - (this.price/100 * parseInt(this.discount));
+}
+};
+price.getPrice(); // 10
+price.getPriceWithDiscount(); // 8.5
+
+// 3 Создать объект, у которого будет поле высота и метод “увеличить
+// высоту на один”. Метод должен возвращать новую высоту:
+// object.height = 10;
+// object.inc(); // придумать свое название для метода
+// object.height; // 11;
+
+let objHeight = {
+  height: 10,
+  increaseHeight() {
+    return this.height++;
+  }
 }
 
-let a = every([1, 5, 21,  3, 15], checkNumber);
-let b = every([1, 5, 21,  3, 15], checkNumber);
+// console.log(objHeight.height);
+// objHeight.increaseHeight();
+// console.log(objHeight.height);
 
-// console.log(a);
-console.log(b);
+// 4 Создать объект “вычислитель”, у которого есть числовое свойство
+// “значение” и методы “удвоить”, “прибавить один”, “отнять один”.
+// Методы можно вызывать через точку, образуя цепочку методов:
+// const numerator = {
+// value: 1,
+// double: function () {...},
+// plusOne: function () {...},
+// minusOne: function () {...},
+// }
+// numerator.double().plusOne().plusOne().minusOne();
+// numerator.value // 3
+
+const numerator = {
+  value: 1,
+  double: function () {
+    this.value *= 2;
+    return this;
+  },
+  plusOne: function () {
+    this.value++;
+    return this;
+  },
+  minusOne: function () { 
+    this.value--;
+    return this;
+  },
+}
+numerator.double().plusOne().plusOne().minusOne();
+
+// numerator.value // 3
+// console.log(numerator.value);
+
+// 5 Создать объект с розничной ценой и количеством продуктов.
+// Этот объект должен содержать метод для получения общей стоимости всех товаров (цена * количество продуктов)
+
+const products = {
+  price: 100,
+  quantity: 6,
+  getCost: function() {
+  return this.price * this.quantity;
+  },
+}
+products.getCost();
+// console.log(products.getCost());
+
+// 6 Создать объект из предыдущей задачи. Создать второй объект, который описывает количество деталей и цену за одну деталь. Для второго объекта нужно узнать общую стоимость всех деталей, но нельзя создавать новые функции и методы.
+// Для этого “позаимствуйте” метод из предыдущего объекта.
+
+const details = {
+  quantity: 20,
+  price: 10,
+}
+
+details.getCost = products.getCost;
+
+// console.log(details.getCost());
+
+// 7 Даны объект и функция:
+// let sizes = {width: 5, height: 10},
+// getSquare = function () {return this.width * this.height};
+// Не изменяя функцию или объект, получить результат функции getSquare для объекта sizes
+
+
+let sizes = {width: 5, height: 10};
+let getSquare = function () {return this.width * this.height};
+
+getSquare.call(sizes);
+// console.log(getSquare.call(sizes));
+
+// let element = {
+//   height: 25,
+//   getHeight: function () {return this.height;}  
+//   };  
+//   let getElementHeight = element.getHeight;
+//   getElementHeight(); // undefined  
+//   Измените функцию getElementHeight таким образом, чтобы можно было вызвать getElementHeight() и получить 25.
+
+let element = {
+  height: 25,
+  getHeight: function () {
+    return this.height;
+    }  
+  };  
+  let getElementHeight = element.getHeight.bind(element);
+  console.log(getElementHeight());
+ 
+
+
+
+
+
+
+
+
+
+
+
+
