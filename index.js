@@ -1,106 +1,131 @@
-import style from './src/assets/style/index.styl'; // импорт стилей
-// const user = {
-//   firstName: 'Denis',
-//   lastName: 'Ivanov',
-//   info: {
-//     work: 'EasyCode',
-//     skills: ['html', 'css']
-//   }
-// }
-// let {firstName, lastName, age = 'Совершеннолетний'} = user;
-// const {info: {skills} } = user;
-// console.log(skills, age);
+import style from './src/assets/style/index.styl'; // 
+const apiURL = 'https://jsonplaceholder.typicode.com/';
+
+// DOM Elements
+const usersListEl = document.querySelector('.users-list');
+const userInfoEl = document.querySelector('.user-info');
 
 
+// 1. реализовать запрос получения пользователей
+// 2. реализовать обработчик ответа от сервера
+// 3. рендер списка пользователей
+// 4. повесить событие клика на список
+// 5. повесть маркер на каждый элемент списка (чтобы определять пользователя по id)
+// 6. получаем id пользователя
+// 7. делаем запрос на сервер и получаем инфу о выбранном пользователе
+// 8. обработчик на получение ответа от сервера
+// 9. функция рендеринга инфо о польователе
 
+// Events
 
-///Домашнее задание
+usersListEl.addEventListener('click', onUserHandler);
 
-// Используя rest оператор и деструктуризацию, создать функцию, которая принимает любое количество аргументов и возвращает объект, содержащий первый аргумент и массив из остатка:
-// func(‘a’, ‘b’, ‘c’, ‘d’) →
-// { first: ‘a’, other: [‘b’, ‘c’, ‘d’] }
+// Event handlers
+function onUserHandler(event) {
+    event.preventDefault();
 
-function getFirstArgumentAndArray(a, ...other) {
-  return {
-    firstArgument: a,
-    arrayOfRemainder: other
-  }
-}
-
-let pes = getFirstArgumentAndArray('a', 'b', 'c', 'd')
-console.log(pes);
-
-// Организовать функцию getInfo, которая принимает объект вида
-// { name: ..., info: { employees: [...], partners: [ … ] } }
-// и выводит в консоль имя (если имени нет, показывать ‘Unknown’) и первые две компании из массива partners:
-
-const organisation = {
-name: 'Google',
-info: { employees: ['Vlad', 'Olga'], partners: ['Microsoft', 'Facebook', 'Xing'] }
-};
-
-// getInfo(organisation); →
-// Name: Google
-// Partners: Microsoft Facebook
-
-function getInfo({name = 'Unknown', info: {employees, partners}} = {}) {
-    const [comp1, comp2, ...other] = partners;
-    console.log(`Name: ${name}, Partners: ${comp1}, ${comp2}`);
-}
-
-getInfo(organisation)
-
-// Дан объект. Используя деструктуризацию получить значения из следующих полей:
-// 1. name,  balance, email
-// 2. из массива tags получить первый и последний элемент
-// 3. из массива friends получить значение поле name из первого элемента массива
-// Если какое то из полей не имеет значения то подставить значение по умолчанию.
-
-let user = {
-  "guid": "dd969d30-841d-436e-9550-3b0c649e4d34",
-  "isActive": false,
-  "balance": "$2,474.46",
-  "age": 30,
-  "eyeColor": "blue",
-  "name": "Tameka Maxwell",
-  "gender": "female",
-  "company": "ENOMEN",
-  "email": "tamekamaxwell@enomen.com",
-  "phone": "+1 (902) 557-3898",
-  "tags": [
-    "aliquip",
-    "anim",
-    "exercitation",
-    "non",
-  ],
-  "friends": [
-    {
-      "id": 0,
-      "name": "Barber Hicks"
-    },
-    {
-      "id": 1,
-      "name": "Santana Cruz"
-    },
-    {
-      "id": 2,
-      "name": "Leola Cabrera"
+    if(event.target.dataset.userId) {
+        const userId = event.target.dataset.userId;
+        getUserInfoHTTP(userId, onGetUserInfoCallback);
     }
-  ],
-};
+}
 
-const {name = 'Noname',  balance = 0, email = 'no mail', tags: [firstTag = 'some tag',, , lastTag = 'some tag'] = [], friends:[{name: firstFriend = 'Best friend'}] = []} = user;
+// HTTP Functions
+function getUsersHttp(cb) {
+    const xhr = new XMLHttpRequest();
 
-console.log(`name,  balance, email:  ${name},  ${balance}, ${email}`); console.log(`первый и последний элемент: ${firstTag}, ${lastTag}`);
-console.log(firstFriend);
+    xhr.open('GET', `${apiURL}users`);
 
-const {tags, friends} = user;
-let newArr = [...tags, ...friends];
-console.log(newArr);
+    xhr.addEventListener('load', () => {
+        // console.log(xhr.response);
+        if(xhr.status !== 200) {
+            console.log('Error', xhr.status);
+            return;
+        }
 
+        const response = JSON.parse(xhr.responseText);
+        cb(response);
+    });
 
+    xhr.send();
+}
 
+function getUserInfoHTTP(id, cb) {
+    const xhr = new XMLHttpRequest();
 
+    xhr.open('GET', `${apiURL}users/${id}`);
 
+    xhr.addEventListener('load', () => {
+        // console.log(xhr.response);
+        if(xhr.status !== 200) {
+            console.log('Error', xhr.status);
+            return;
+        }
+
+        const response = JSON.parse(xhr.responseText);
+        cb(response);
+    });
+
+    xhr.send();
+}
+
+function onGetUserInfoCallback(user) {
+    if(!user.id) {
+        console.log('user not found');
+        return;
+    }
+
+    renderUserInfo(user);
+}
+
+function getUsersCallback(users) {
+    if(!users.length) {
+        console.log('Массив пустой');
+        return;
+    }
+
+    renderUsersList(users);
+}
+
+// Render functions
+function renderUsersList(users) {
+    const fragment = users.reduce((acc, user) => acc + userListItemTemplate(user), '');
+
+    usersListEl.insertAdjacentHTML('afterbegin', fragment);
+}
+
+function renderUserInfo(user) {
+    userInfoEl.innerHTML = '';
+    const temlate = userInfoTemplate(user);
+    userInfoEl.insertAdjacentHTML('afterbegin', temlate);
+}
+
+// Template functions
+
+function userListItemTemplate(user) {
+    return `<button type="button" class="list-group-item list-group-item-action active" data-user-id="${user.id}">${user.name}</button>`;
+}
+
+function userInfoTemplate(user) {
+    return `
+    <div class="card border-dark mb-3">
+        <div class=" card-header">${user.name}</div>
+        <div class="card-body text-dark">
+            <h5 class="card-title">${user.email}</h5>
+            <ul class="list-group list-group-flush">
+            <li class="list-group-item"><b>Nickname:</b> ${user.username}</li>
+            <li class="list-group-item"><b>Website:</b> ${user.website}</li>
+            <li class="list-group-item"><b>Company:</b> ${user.company.name}</li>
+            <li class="list-group-item"><b>City:</b> ${user.address.city}</li>
+            </ul>
+        </div>
+        <div class="card-footer bg-transparent border-dark">Phone: ${user.phone}</div>
+    </div>
+    `
+}
+
+// Init App
+
+getUsersHttp(getUsersCallback);
 
 
