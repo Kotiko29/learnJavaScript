@@ -4,6 +4,8 @@ const apiURL = 'https://jsonplaceholder.typicode.com/';
 // DOM Elements
 const usersListEl = document.querySelector('.users-list');
 const userInfoEl = document.querySelector('.user-info');
+const btnAddingUser = document.querySelector('.btn-addingUser');
+const userForm = document.forms.userForm;
 
 
 // 1. реализовать запрос получения пользователей
@@ -19,6 +21,10 @@ const userInfoEl = document.querySelector('.user-info');
 // Events
 
 usersListEl.addEventListener('click', onUserHandler);
+userForm.addEventListener('submit', (event) => {
+    event.preventDefault();
+    console.log('click');
+});
 
 // Event handlers
 function onUserHandler(event) {

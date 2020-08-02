@@ -10,6 +10,30 @@
 </head>
 
 <body>
+  <section class="addingUser">
+    <fieldset>
+      <legend>Добавление пользователя в каталог</legend>
+      <form class="addingUser-form" method="POST" name="userForm" action="#">
+        <div class="addingUser-form-group">
+          <label for="name">Name</label>
+          <input id="name" type="text" name="name" class="name field form-control">
+        </div>
+        <div class="addingUser-form-group">
+          <label for="email">Email</label>
+          <input id="email" type="email" name="email" class="email field form-control">
+        </div>
+        <div class="addingUser-form-group">
+          <label for="phone">Phone</label>
+          <input id="phone" type="phone" name="phone" class="phone field form-control">
+        </div>
+        <div class="addingUser-form-group">
+          <label for="website">Website</label>
+          <input id="website" type="text" name="website" class="website field form-control">
+        </div>
+        <button type="submit" class="btn btn-primary btn-addingUser">Submit</button>
+      </fieldset>
+    </form>
+  </section>
 
   <section class="users-wrapper mt-5">
     <div class="contaiter">
